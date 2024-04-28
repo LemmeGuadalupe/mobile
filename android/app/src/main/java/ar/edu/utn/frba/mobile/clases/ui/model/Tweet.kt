@@ -14,4 +14,5 @@ data class Tweet(
     val commentCount: Long,
     val retweetCount: Long,
     val likeCount: Long
+
 )

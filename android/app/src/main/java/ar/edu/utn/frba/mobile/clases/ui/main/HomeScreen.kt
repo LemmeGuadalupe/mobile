@@ -31,6 +31,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import ar.edu.utn.frba.mobile.clases.R
 import ar.edu.utn.frba.mobile.clases.ui.model.Tweet
 import coil.compose.AsyncImage

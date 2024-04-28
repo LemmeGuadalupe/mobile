@@ -6,10 +6,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ar.edu.utn.frba.mobile.clases.ui.model.Tweet
+import ar.edu.utn.frba.mobile.clases.ui.model.TweetsResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import java.util.Date
 
 class TweetsViewModel() : ViewModel() {
@@ -50,13 +53,11 @@ class TweetsViewModel() : ViewModel() {
         isLoadingMutableLiveData.value = true
         viewModelScope.launch(Dispatchers.Main) {
             try {
-                val response = mockedServiceGetTweets(
-                    oldest = oldest,
-                    latest = latest
-                )
+                //val response = mockedServiceGetTweets(oldest = oldest, latest = latest)
+                val response = tweetServiceGetTweets(oldest = oldest,latest = latest)
                 if (response.isSuccessful) {
                     // Obtener la lista de tweets desde la respuesta
-                    val newTweets = response.body() ?: emptyList()
+                    val newTweets = response.body()?.tweets ?: emptyList()
                     val oldTweets = tweetsLiveData.value ?: emptyList()
                     val tweets = if (onTop) newTweets.plus(oldTweets) else oldTweets.plus(newTweets)
                     if (!onTop && newTweets.size == 0) {
@@ -89,4 +90,8 @@ private suspend fun mockedServiceGetTweets(oldest: Long?, latest: Long?): Respon
     return Response.success(firstTs.rangeTo(lastTs).map {
         Tweet(ts = it, profilePic = "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png", name = "Username", certified = it % 2 == 0L, username = "@username", content = "This is a tweet", image = null, commentCount = 123, retweetCount = 234, likeCount = it % 1000)
     })
+}
+
+private suspend fun tweetServiceGetTweets(oldest: Long?, latest: Long?): Response<TweetsResponse> {
+    return RetrofitClient.service.list(oldest,latest)
 }
