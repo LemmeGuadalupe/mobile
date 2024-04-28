@@ -12,7 +12,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import ar.edu.utn.frba.mobile.clases.ui.main.HomeScreen
-import ar.edu.utn.frba.mobile.clases.ui.status_update.StatusUpdateScreen
 import ar.edu.utn.frba.mobile.clases.ui.theme.ClasesTheme
 
 class MainComposeActivity : ComponentActivity() {
@@ -28,14 +27,6 @@ class MainComposeActivity : ComponentActivity() {
 private fun App() {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = "home") {
-        composable("home") {
-            HomeScreen(
-                onButtonClick = { navController.navigate("post") },
-                navController = navController)
-        }
-        composable("post") {
-            StatusUpdateScreen(
-                navController = navController)
-        }
+        composable("home") { HomeScreen() }
     }
 }

@@ -1,8 +1,6 @@
-package ar.edu.utn.frba.mobile.clases.ui.status_update
+package ar.edu.utn.frba.mobile.clases.ui.main
 
 import android.content.Context
-import android.graphics.Color
-import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,8 +9,6 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ar.edu.utn.frba.mobile.clases.R
-import ar.edu.utn.frba.mobile.clases.databinding.MainFragmentBinding
-import ar.edu.utn.frba.mobile.clases.databinding.StatusUpdateFragmentBinding
 
 /**
  * A simple [Fragment] subclass.
@@ -23,23 +19,14 @@ import ar.edu.utn.frba.mobile.clases.databinding.StatusUpdateFragmentBinding
  * create an instance of this fragment.
  *
  */
-class StatusUpdateFragment : Fragment(), ColorsAdapter.ItemClickListener {
-    private var _binding: StatusUpdateFragmentBinding? = null
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding get() = _binding!!
+class StatusUpdateFragment : Fragment() {
 
     private var listener: OnFragmentInteractionListener? = null
-    val colorsAdapter = ColorsAdapter(this)
-    val backgroundDrawable = GradientDrawable().apply {
-        orientation = GradientDrawable.Orientation.TL_BR
-        setColor(Color.WHITE)
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        _binding = StatusUpdateFragmentBinding.inflate(inflater, container, false)
-        return binding.root
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_status_update, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -48,10 +35,8 @@ class StatusUpdateFragment : Fragment(), ColorsAdapter.ItemClickListener {
             layoutManager = LinearLayoutManager(context).apply {
                 orientation = LinearLayoutManager.HORIZONTAL
             }
-            adapter = colorsAdapter
+            adapter = ColorsAdapter()
         }
-        binding.textField.background = backgroundDrawable
-        binding.textField.setTextColor(Color.WHITE)
     }
 
     override fun onAttach(context: Context) {
@@ -59,20 +44,13 @@ class StatusUpdateFragment : Fragment(), ColorsAdapter.ItemClickListener {
         if (context is OnFragmentInteractionListener) {
             listener = context
         } else {
-            throw RuntimeException(context.toString() + " must implement OnFragmentInteractionListener")
+            throw RuntimeException("$context must implement OnFragmentInteractionListener")
         }
     }
 
     override fun onDetach() {
         super.onDetach()
         listener = null
-    }
-
-    override fun onItemClick(position: Int) {
-        val colors = PostTheme.getBackgroundColors(position)
-        backgroundDrawable.colors = colors
-        val backColor = colors.get(0)
-        binding.textField.setTextColor(PostTheme.getTextColor(backColor))
     }
 
     /**

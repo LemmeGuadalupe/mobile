@@ -2,15 +2,14 @@ package ar.edu.utn.frba.mobile.clases.ui.main
 
 import android.content.Context
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import ar.edu.utn.frba.mobile.clases.R
 import ar.edu.utn.frba.mobile.clases.databinding.MainFragmentBinding
-import ar.edu.utn.frba.mobile.clases.ui.status_update.StatusUpdateFragment
-
-private const val ARG_TITLE = "title"
 
 /**
  * A simple [Fragment] subclass.
@@ -22,21 +21,13 @@ private const val ARG_TITLE = "title"
  *
  */
 class MainFragment : Fragment() {
+    private var listener: OnFragmentInteractionListener? = null
+    private lateinit var tweetsAdapter: TweetsAdapter
+
     private var _binding: MainFragmentBinding? = null
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
-
-    private var title: String? = null
-    private var listener: OnFragmentInteractionListener? = null
-    private lateinit var viewModel: MainViewModel
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            title = it.getString(ARG_TITLE)
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,11 +39,10 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
-        // TODO: Use the ViewModel
-        binding.okButton.text = title
-        binding.okButton.setOnClickListener {
-            onButtonPressed()
+        tweetsAdapter = TweetsAdapter(listener)
+        binding.list.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = tweetsAdapter
         }
     }
 
@@ -65,8 +55,19 @@ class MainFragment : Fragment() {
         if (context is OnFragmentInteractionListener) {
             listener = context
         } else {
-            throw RuntimeException(context.toString() + " must implement OnFragmentInteractionListener")
+            throw RuntimeException("$context must implement OnFragmentInteractionListener")
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        // Simulamos un request
+        binding.list.visibility = View.GONE
+        binding.progressBar.visibility = View.VISIBLE
+        Handler().postDelayed({
+            binding.list.visibility = View.VISIBLE
+            binding.progressBar.visibility = View.GONE
+        }, 1000)
     }
 
     override fun onDetach() {
@@ -94,15 +95,9 @@ class MainFragment : Fragment() {
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
          *
-         * @param title Title.
          * @return A new instance of fragment MainFragment.
          */
         @JvmStatic
-        fun newInstance(title: String) =
-            MainFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_TITLE, title)
-                }
-            }
+        fun newInstance() = MainFragment()
     }
 }
